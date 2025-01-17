@@ -29,7 +29,7 @@ export const TopSellingCarousel = ({
           {workflows.map((workflow) => (
             <CarouselItem key={workflow.id} className="md:basis-1/2 lg:basis-1/3">
               <Card
-                className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer h-full"
+                className="p-6 bg-white border border-gray-200 hover:border-blue-500 transition-all duration-300 cursor-pointer h-full"
                 onClick={() => onWorkflowSelect(workflow)}
               >
                 <div className="flex flex-col h-full">
