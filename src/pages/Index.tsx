@@ -35,7 +35,7 @@ const mockWorkflows: Workflow[] = [
     description: "Efficient ETL workflow for large datasets",
     price: "0.1",
     seller: "0x1234...5678",
-    image: "/placeholder.svg", // Using placeholder image
+    image: "/placeholder.svg",
   },
   {
     id: "2",
@@ -53,6 +53,22 @@ const mockWorkflows: Workflow[] = [
     seller: "0x2468...1357",
     image: "/placeholder.svg",
   },
+  {
+    id: "4",
+    title: "Data Visualization Pipeline",
+    description: "Create beautiful data visualizations automatically",
+    price: "0.12",
+    seller: "0x9876...2468",
+    image: "/placeholder.svg",
+  },
+  {
+    id: "5",
+    title: "Automated Testing Suite",
+    description: "Comprehensive testing workflow for web applications",
+    price: "0.18",
+    seller: "0x3579...8642",
+    image: "/placeholder.svg",
+  }
 ];
 
 const Index = () => {
