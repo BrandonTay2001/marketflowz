@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Wallet, ShoppingBag } from "lucide-react";
+import { Wallet, ShoppingBag, Twitter, Telegram, Globe } from "lucide-react";
 import { useState } from "react";
 
 interface Workflow {
@@ -74,23 +74,51 @@ const Index = () => {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-12">
           <h1 className="text-4xl font-bold">Workflow Marketplace</h1>
-          <Button
-            onClick={connectWallet}
-            className="bg-blue-600 hover:bg-blue-700"
-            size="lg"
-          >
-            {connected ? (
-              <div className="flex items-center gap-2">
-                <Wallet className="w-4 h-4" />
-                {`${account.slice(0, 6)}...${account.slice(-4)}`}
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Wallet className="w-4 h-4" />
-                Connect Wallet
-              </div>
-            )}
-          </Button>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-4">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
+                <Twitter className="w-5 h-5" />
+              </a>
+              <a
+                href="https://telegram.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
+                <Telegram className="w-5 h-5" />
+              </a>
+              <a
+                href="https://example.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-blue-400 transition-colors"
+              >
+                <Globe className="w-5 h-5" />
+              </a>
+            </div>
+            <Button
+              onClick={connectWallet}
+              className="bg-blue-600 hover:bg-blue-700"
+              size="lg"
+            >
+              {connected ? (
+                <div className="flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  {`${account.slice(0, 6)}...${account.slice(-4)}`}
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Wallet className="w-4 h-4" />
+                  Connect Wallet
+                </div>
+              )}
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
