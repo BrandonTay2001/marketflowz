@@ -10,6 +10,14 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { Input } from "@/components/ui/input";
 
 interface Workflow {
   id: string;
@@ -52,6 +60,14 @@ const Index = () => {
   const [connected, setConnected] = useState(false);
   const [account, setAccount] = useState("");
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const topSellingWorkflows = mockWorkflows.slice(0, 3); // First 3 workflows as top selling
+  const otherWorkflows = mockWorkflows.slice(3);
+
+  const filteredWorkflows = otherWorkflows.filter((workflow) =>
+    workflow.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const connectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -148,43 +164,94 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockWorkflows.map((workflow) => (
-            <Card
-              key={workflow.id}
-              className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer"
-              onClick={() => setSelectedWorkflow(workflow)}
-            >
-              <div className="flex flex-col h-full">
-                <h3 className="text-xl font-semibold mb-2">{workflow.title}</h3>
-                <p className="text-gray-400 mb-4 flex-grow">
-                  {workflow.description}
-                </p>
-                <div className="flex justify-between items-center">
-                  <div className="text-blue-400">
-                    <span className="text-sm">Price:</span>
-                    <span className="ml-2 font-semibold">
-                      {workflow.price} ETH
-                    </span>
-                  </div>
-                  <Button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePurchase(workflow);
-                    }}
-                    variant="secondary"
-                    size="sm"
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold mb-6">Top Selling Workflows</h2>
+          <Carousel className="w-full">
+            <CarouselContent>
+              {topSellingWorkflows.map((workflow) => (
+                <CarouselItem key={workflow.id} className="md:basis-1/2 lg:basis-1/3">
+                  <Card
+                    className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer h-full"
+                    onClick={() => setSelectedWorkflow(workflow)}
                   >
-                    <ShoppingBag className="w-4 h-4 mr-2" />
-                    Buy Now
-                  </Button>
+                    <div className="flex flex-col h-full">
+                      <h3 className="text-xl font-semibold mb-2">{workflow.title}</h3>
+                      <p className="text-gray-400 mb-4 flex-grow">
+                        {workflow.description}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <div className="text-blue-400">
+                          <span className="text-sm">Price:</span>
+                          <span className="ml-2 font-semibold">
+                            {workflow.price} ETH
+                          </span>
+                        </div>
+                        <Button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePurchase(workflow);
+                          }}
+                          variant="secondary"
+                          size="sm"
+                        >
+                          <ShoppingBag className="w-4 h-4 mr-2" />
+                          Buy Now
+                        </Button>
+                      </div>
+                    </div>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
+        </div>
+
+        <div>
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-semibold">All Workflows</h2>
+            <Input
+              type="search"
+              placeholder="Search workflows..."
+              className="max-w-xs bg-gray-700 border-gray-600"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
+          <div className="space-y-4">
+            {filteredWorkflows.map((workflow) => (
+              <Card
+                key={workflow.id}
+                className="p-4 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer"
+                onClick={() => setSelectedWorkflow(workflow)}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <h3 className="text-xl font-semibold">{workflow.title}</h3>
+                    <p className="text-gray-400 mt-1">{workflow.description}</p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-blue-400">
+                      <span className="text-sm">Price:</span>
+                      <span className="ml-2 font-semibold">{workflow.price} ETH</span>
+                    </div>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handlePurchase(workflow);
+                      }}
+                      variant="secondary"
+                      size="sm"
+                    >
+                      <ShoppingBag className="w-4 h-4 mr-2" />
+                      Buy Now
+                    </Button>
+                  </div>
                 </div>
-                <div className="mt-4 text-sm text-gray-500">
-                  Seller: {workflow.seller}
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))}
+          </div>
         </div>
 
         <Dialog
