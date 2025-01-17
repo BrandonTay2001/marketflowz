@@ -1,32 +1,11 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Wallet, ShoppingBag, Twitter, MessageCircle, Globe } from "lucide-react";
+import { Wallet, Twitter, MessageCircle, Globe } from "lucide-react";
 import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Input } from "@/components/ui/input";
-
-interface Workflow {
-  id: string;
-  title: string;
-  description: string;
-  price: string;
-  seller: string;
-  image?: string; // Optional for now since we don't have real images
-}
+import { TopSellingCarousel } from "@/components/marketplace/TopSellingCarousel";
+import { WorkflowList } from "@/components/marketplace/WorkflowList";
+import { WorkflowDialog } from "@/components/marketplace/WorkflowDialog";
+import { Workflow } from "@/types/marketplace";
 
 const mockWorkflows: Workflow[] = [
   {
@@ -78,7 +57,7 @@ const Index = () => {
   const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const topSellingWorkflows = mockWorkflows.slice(0, 3); // First 3 workflows as top selling
+  const topSellingWorkflows = mockWorkflows.slice(0, 3);
   const otherWorkflows = mockWorkflows.slice(3);
 
   const filteredWorkflows = otherWorkflows.filter((workflow) =>
@@ -180,140 +159,25 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6">Top Selling Workflows</h2>
-          <Carousel className="w-full">
-            <CarouselContent>
-              {topSellingWorkflows.map((workflow) => (
-                <CarouselItem key={workflow.id} className="md:basis-1/2 lg:basis-1/3">
-                  <Card
-                    className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer h-full"
-                    onClick={() => setSelectedWorkflow(workflow)}
-                  >
-                    <div className="flex flex-col h-full">
-                      <h3 className="text-xl font-semibold mb-2">{workflow.title}</h3>
-                      <p className="text-gray-400 mb-4 flex-grow">
-                        {workflow.description}
-                      </p>
-                      <div className="flex justify-between items-center">
-                        <div className="text-blue-400">
-                          <span className="text-sm">Price:</span>
-                          <span className="ml-2 font-semibold">
-                            {workflow.price} ETH
-                          </span>
-                        </div>
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handlePurchase(workflow);
-                          }}
-                          variant="secondary"
-                          size="sm"
-                        >
-                          <ShoppingBag className="w-4 h-4 mr-2" />
-                          Buy Now
-                        </Button>
-                      </div>
-                    </div>
-                  </Card>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
-        </div>
+        <TopSellingCarousel
+          workflows={topSellingWorkflows}
+          onWorkflowSelect={setSelectedWorkflow}
+          onPurchase={handlePurchase}
+        />
 
-        <div>
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold">All Workflows</h2>
-            <Input
-              type="search"
-              placeholder="Search workflows..."
-              className="max-w-xs bg-gray-700 border-gray-600"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-          <div className="space-y-4">
-            {filteredWorkflows.map((workflow) => (
-              <Card
-                key={workflow.id}
-                className="p-4 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer"
-                onClick={() => setSelectedWorkflow(workflow)}
-              >
-                <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="text-xl font-semibold">{workflow.title}</h3>
-                    <p className="text-gray-400 mt-1">{workflow.description}</p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-blue-400">
-                      <span className="text-sm">Price:</span>
-                      <span className="ml-2 font-semibold">{workflow.price} ETH</span>
-                    </div>
-                    <Button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handlePurchase(workflow);
-                      }}
-                      variant="secondary"
-                      size="sm"
-                    >
-                      <ShoppingBag className="w-4 h-4 mr-2" />
-                      Buy Now
-                    </Button>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
+        <WorkflowList
+          workflows={filteredWorkflows}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          onWorkflowSelect={setSelectedWorkflow}
+          onPurchase={handlePurchase}
+        />
 
-        <Dialog
-          open={selectedWorkflow !== null}
+        <WorkflowDialog
+          workflow={selectedWorkflow}
           onOpenChange={(open) => !open && setSelectedWorkflow(null)}
-        >
-          {selectedWorkflow && (
-            <DialogContent className="bg-gray-800 text-white border-gray-700 sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle className="text-2xl font-bold">
-                  {selectedWorkflow.title}
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-6">
-                <img
-                  src={selectedWorkflow.image}
-                  alt={selectedWorkflow.title}
-                  className="w-full h-64 object-cover rounded-lg"
-                />
-                <DialogDescription className="text-gray-300 text-base">
-                  {selectedWorkflow.description}
-                </DialogDescription>
-                <div className="flex flex-col space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Price:</span>
-                    <span className="text-blue-400 font-semibold text-xl">
-                      {selectedWorkflow.price} ETH
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-400">Seller:</span>
-                    <span className="text-gray-300">{selectedWorkflow.seller}</span>
-                  </div>
-                  <Button
-                    onClick={() => handlePurchase(selectedWorkflow)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 mt-4"
-                    size="lg"
-                  >
-                    <ShoppingBag className="w-5 h-5 mr-2" />
-                    Purchase Workflow
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          )}
-        </Dialog>
+          onPurchase={handlePurchase}
+        />
       </div>
     </div>
   );
