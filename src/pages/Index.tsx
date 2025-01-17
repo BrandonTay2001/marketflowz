@@ -3,6 +3,13 @@ import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Wallet, ShoppingBag, Twitter, MessageCircle, Globe } from "lucide-react";
 import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface Workflow {
   id: string;
@@ -10,6 +17,7 @@ interface Workflow {
   description: string;
   price: string;
   seller: string;
+  image?: string; // Optional for now since we don't have real images
 }
 
 const mockWorkflows: Workflow[] = [
@@ -19,6 +27,7 @@ const mockWorkflows: Workflow[] = [
     description: "Efficient ETL workflow for large datasets",
     price: "0.1",
     seller: "0x1234...5678",
+    image: "/placeholder.svg", // Using placeholder image
   },
   {
     id: "2",
@@ -26,6 +35,7 @@ const mockWorkflows: Workflow[] = [
     description: "Automated machine learning model training pipeline",
     price: "0.2",
     seller: "0x8765...4321",
+    image: "/placeholder.svg",
   },
   {
     id: "3",
@@ -33,6 +43,7 @@ const mockWorkflows: Workflow[] = [
     description: "Seamless integration with popular APIs",
     price: "0.15",
     seller: "0x2468...1357",
+    image: "/placeholder.svg",
   },
 ];
 
@@ -40,6 +51,7 @@ const Index = () => {
   const { toast } = useToast();
   const [connected, setConnected] = useState(false);
   const [account, setAccount] = useState("");
+  const [selectedWorkflow, setSelectedWorkflow] = useState<Workflow | null>(null);
 
   const connectWallet = async () => {
     if (typeof window.ethereum !== "undefined") {
@@ -67,6 +79,21 @@ const Index = () => {
         description: "Please install MetaMask to use this application",
       });
     }
+  };
+
+  const handlePurchase = (workflow: Workflow) => {
+    if (!connected) {
+      toast({
+        variant: "destructive",
+        title: "Wallet Not Connected",
+        description: "Please connect your wallet to make purchases",
+      });
+      return;
+    }
+    toast({
+      title: "Purchase Initiated",
+      description: "Processing your purchase...",
+    });
   };
 
   return (
@@ -125,7 +152,8 @@ const Index = () => {
           {mockWorkflows.map((workflow) => (
             <Card
               key={workflow.id}
-              className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300"
+              className="p-6 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer"
+              onClick={() => setSelectedWorkflow(workflow)}
             >
               <div className="flex flex-col h-full">
                 <h3 className="text-xl font-semibold mb-2">{workflow.title}</h3>
@@ -135,22 +163,14 @@ const Index = () => {
                 <div className="flex justify-between items-center">
                   <div className="text-blue-400">
                     <span className="text-sm">Price:</span>
-                    <span className="ml-2 font-semibold">{workflow.price} ETH</span>
+                    <span className="ml-2 font-semibold">
+                      {workflow.price} ETH
+                    </span>
                   </div>
                   <Button
-                    onClick={() => {
-                      if (!connected) {
-                        toast({
-                          variant: "destructive",
-                          title: "Wallet Not Connected",
-                          description: "Please connect your wallet to make purchases",
-                        });
-                        return;
-                      }
-                      toast({
-                        title: "Purchase Initiated",
-                        description: "Processing your purchase...",
-                      });
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePurchase(workflow);
                     }}
                     variant="secondary"
                     size="sm"
@@ -166,6 +186,51 @@ const Index = () => {
             </Card>
           ))}
         </div>
+
+        <Dialog
+          open={selectedWorkflow !== null}
+          onOpenChange={(open) => !open && setSelectedWorkflow(null)}
+        >
+          {selectedWorkflow && (
+            <DialogContent className="bg-gray-800 text-white border-gray-700 sm:max-w-[600px]">
+              <DialogHeader>
+                <DialogTitle className="text-2xl font-bold">
+                  {selectedWorkflow.title}
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-6">
+                <img
+                  src={selectedWorkflow.image}
+                  alt={selectedWorkflow.title}
+                  className="w-full h-64 object-cover rounded-lg"
+                />
+                <DialogDescription className="text-gray-300 text-base">
+                  {selectedWorkflow.description}
+                </DialogDescription>
+                <div className="flex flex-col space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Price:</span>
+                    <span className="text-blue-400 font-semibold text-xl">
+                      {selectedWorkflow.price} ETH
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-400">Seller:</span>
+                    <span className="text-gray-300">{selectedWorkflow.seller}</span>
+                  </div>
+                  <Button
+                    onClick={() => handlePurchase(selectedWorkflow)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 mt-4"
+                    size="lg"
+                  >
+                    <ShoppingBag className="w-5 h-5 mr-2" />
+                    Purchase Workflow
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          )}
+        </Dialog>
       </div>
     </div>
   );
