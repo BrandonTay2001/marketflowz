@@ -6,6 +6,12 @@ import { TopSellingCarousel } from "@/components/marketplace/TopSellingCarousel"
 import { WorkflowList } from "@/components/marketplace/WorkflowList";
 import { WorkflowDialog } from "@/components/marketplace/WorkflowDialog";
 import { Workflow } from "@/types/marketplace";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const mockWorkflows: Workflow[] = [
   {
@@ -92,6 +98,15 @@ const Index = () => {
     }
   };
 
+  const disconnectWallet = () => {
+    setConnected(false);
+    setAccount("");
+    toast({
+      title: "Wallet Disconnected",
+      description: "Successfully disconnected from MetaMask",
+    });
+  };
+
   const handlePurchase = (workflow: Workflow) => {
     if (!connected) {
       toast({
@@ -139,23 +154,40 @@ const Index = () => {
                 <Globe className="w-5 h-5" />
               </a>
             </div>
-            <Button
-              onClick={connectWallet}
-              className="bg-blue-600 hover:bg-blue-700"
-              size="lg"
-            >
-              {connected ? (
-                <div className="flex items-center gap-2">
-                  <Wallet className="w-4 h-4" />
-                  {`${account.slice(0, 6)}...${account.slice(-4)}`}
-                </div>
-              ) : (
+            {connected ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700"
+                    size="lg"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Wallet className="w-4 h-4" />
+                      {`${account.slice(0, 6)}...${account.slice(-4)}`}
+                    </div>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuItem onClick={() => window.location.href = "/dashboard"}>
+                    Dashboard
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={disconnectWallet}>
+                    Disconnect Wallet
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button
+                onClick={connectWallet}
+                className="bg-blue-600 hover:bg-blue-700"
+                size="lg"
+              >
                 <div className="flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
                   Connect Wallet
                 </div>
-              )}
-            </Button>
+              </Button>
+            )}
           </div>
         </div>
 
