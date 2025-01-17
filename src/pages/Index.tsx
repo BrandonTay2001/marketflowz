@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Wallet, Twitter, MessageCircle, Globe } from "lucide-react";
+import { Wallet, Twitter, MessageCircle, Globe, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import { TopSellingCarousel } from "@/components/marketplace/TopSellingCarousel";
 import { WorkflowList } from "@/components/marketplace/WorkflowList";
@@ -164,6 +164,7 @@ const Index = () => {
                     <div className="flex items-center gap-2">
                       <Wallet className="w-4 h-4" />
                       {`${account.slice(0, 6)}...${account.slice(-4)}`}
+                      <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
                     </div>
                   </Button>
                 </DropdownMenuTrigger>
