@@ -21,12 +21,12 @@ export const WorkflowList = ({
 }: WorkflowListProps) => {
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">All Workflows</h2>
+      <div className="flex justify-between items-center mb-8">
+        <h2 className="text-2xl font-semibold text-gray-900">All Workflows</h2>
         <Input
           type="search"
           placeholder="Search workflows..."
-          className="max-w-xs bg-gray-700 border-gray-600"
+          className="max-w-xs glass-card"
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
         />
@@ -35,17 +35,17 @@ export const WorkflowList = ({
         {workflows.map((workflow) => (
           <Card
             key={workflow.id}
-            className="p-4 bg-gray-800 border-gray-700 hover:border-blue-500 transition-all duration-300 cursor-pointer"
+            className="workflow-card cursor-pointer"
             onClick={() => onWorkflowSelect(workflow)}
           >
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="text-xl font-semibold">{workflow.title}</h3>
-                <p className="text-gray-400 mt-1">{workflow.description}</p>
+                <h3 className="text-xl font-semibold text-gray-900">{workflow.title}</h3>
+                <p className="text-gray-500 mt-1">{workflow.description}</p>
               </div>
               <div className="flex items-center gap-4">
-                <div className="text-blue-400">
-                  <span className="text-sm">Price:</span>
+                <div className="text-gray-900">
+                  <span className="text-sm text-gray-500">Price:</span>
                   <span className="ml-2 font-semibold">{workflow.price} ETH</span>
                 </div>
                 <Button
@@ -55,6 +55,7 @@ export const WorkflowList = ({
                   }}
                   variant="secondary"
                   size="sm"
+                  className="glass-card hover:bg-gray-50"
                 >
                   <ShoppingBag className="w-4 h-4 mr-2" />
                   Buy Now

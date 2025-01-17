@@ -116,8 +116,8 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-900 to-gray-800 text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Header
           connected={connected}
           account={account}
@@ -125,25 +125,27 @@ const Index = () => {
           onDisconnect={disconnectWallet}
         />
 
-        <TopSellingCarousel
-          workflows={topSellingWorkflows}
-          onWorkflowSelect={setSelectedWorkflow}
-          onPurchase={handlePurchase}
-        />
+        <div className="space-y-12">
+          <TopSellingCarousel
+            workflows={topSellingWorkflows}
+            onWorkflowSelect={setSelectedWorkflow}
+            onPurchase={handlePurchase}
+          />
 
-        <WorkflowList
-          workflows={filteredWorkflows}
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          onWorkflowSelect={setSelectedWorkflow}
-          onPurchase={handlePurchase}
-        />
+          <WorkflowList
+            workflows={filteredWorkflows}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            onWorkflowSelect={setSelectedWorkflow}
+            onPurchase={handlePurchase}
+          />
 
-        <WorkflowDialog
-          workflow={selectedWorkflow}
-          onOpenChange={(open) => !open && setSelectedWorkflow(null)}
-          onPurchase={handlePurchase}
-        />
+          <WorkflowDialog
+            workflow={selectedWorkflow}
+            onOpenChange={(open) => !open && setSelectedWorkflow(null)}
+            onPurchase={handlePurchase}
+          />
+        </div>
       </div>
     </div>
   );
