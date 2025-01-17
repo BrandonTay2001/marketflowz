@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ShoppingCart } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Download, ShoppingCart } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 export const PurchaseHistory = () => {
+  const { toast } = useToast();
+  
   // In a real app, this would come from your backend
   const purchases = [
     {
@@ -19,6 +23,14 @@ export const PurchaseHistory = () => {
     },
   ];
 
+  const handleDownload = (purchaseId: string) => {
+    // This would be replaced with actual download logic in the future
+    toast({
+      title: "Download Started",
+      description: `Downloading workflow ${purchaseId}...`,
+    });
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -34,6 +46,7 @@ export const PurchaseHistory = () => {
               <TableHead>Workflow Name</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Purchase Date</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -42,6 +55,16 @@ export const PurchaseHistory = () => {
                 <TableCell>{purchase.name}</TableCell>
                 <TableCell>{purchase.price}</TableCell>
                 <TableCell>{purchase.date}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDownload(purchase.id)}
+                    title="Download Workflow"
+                  >
+                    <Download className="h-4 w-4" />
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
