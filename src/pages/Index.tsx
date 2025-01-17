@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Wallet, ShoppingBag, Twitter, Telegram, Globe } from "lucide-react";
+import { Wallet, ShoppingBag, Twitter, MessageCircle, Globe } from "lucide-react";
 import { useState } from "react";
 
 interface Workflow {
@@ -90,7 +90,7 @@ const Index = () => {
                 rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-400 transition-colors"
               >
-                <Telegram className="w-5 h-5" />
+                <MessageCircle className="w-5 h-5" />
               </a>
               <a
                 href="https://example.com"
