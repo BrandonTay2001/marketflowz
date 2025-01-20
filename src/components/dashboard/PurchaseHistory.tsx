@@ -59,10 +59,10 @@ export const PurchaseHistory = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Workflow Name</TableHead>
-              <TableHead>Price</TableHead>
-              <TableHead>Purchase Date</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[40%]">Workflow Name</TableHead>
+              <TableHead className="w-[25%]">Price</TableHead>
+              <TableHead className="w-[25%]">Purchase Date</TableHead>
+              <TableHead className="w-[10%]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

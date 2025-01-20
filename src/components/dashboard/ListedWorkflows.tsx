@@ -65,10 +65,10 @@ export const ListedWorkflows = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Workflow Name</TableHead>
-              <TableHead>Lifetime Revenue</TableHead>
-              <TableHead>Listing Date</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
+              <TableHead className="w-[40%]">Workflow Name</TableHead>
+              <TableHead className="w-[25%]">Lifetime Revenue</TableHead>
+              <TableHead className="w-[25%]">Listing Date</TableHead>
+              <TableHead className="w-[10%]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
