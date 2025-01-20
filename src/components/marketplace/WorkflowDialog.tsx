@@ -25,7 +25,7 @@ export const WorkflowDialog = ({
     <Dialog open={!!workflow} onOpenChange={onOpenChange}>
       <DialogContent className="glass-card sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-gray-900">
+          <DialogTitle className="text-2xl font-bold text-black">
             {workflow.title}
           </DialogTitle>
         </DialogHeader>
@@ -33,23 +33,23 @@ export const WorkflowDialog = ({
           <img
             src={workflow.image}
             alt={workflow.title}
-            className="w-full h-64 object-cover rounded-lg"
+            className="w-full h-64 object-cover rounded-lg transition-all duration-300 hover:shadow-2xl filter grayscale"
           />
-          <p className="text-gray-600 text-base">{workflow.description}</p>
+          <p className="text-black text-base">{workflow.description}</p>
           <div className="flex flex-col space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-gray-500">Price:</span>
-              <span className="text-gray-900 font-semibold text-xl">
+              <span className="text-black">Price:</span>
+              <span className="text-black font-semibold text-xl">
                 {workflow.price} ETH
               </span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-500">Seller:</span>
-              <span className="text-gray-700">{workflow.seller}</span>
+              <span className="text-black">Seller:</span>
+              <span className="text-black">{workflow.seller}</span>
             </div>
             <Button
               onClick={() => onPurchase(workflow)}
-              className="w-full glass-card hover:bg-gray-50"
+              className="w-full glass-card hover:bg-gray-50 hover:shadow-2xl transition-all duration-300 text-black"
               size="lg"
             >
               <ShoppingBag className="w-5 h-5 mr-2" />
