@@ -1,9 +1,45 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export const WalletInfo = () => {
-  // In a real app, this would come from your wallet connection
-  const walletAddress = "0x1234...5678";
+  const [walletAddress, setWalletAddress] = useState("");
+
+  useEffect(() => {
+    const getConnectedWallet = async () => {
+      if (typeof window.ethereum !== "undefined") {
+        try {
+          const accounts = await window.ethereum.request({
+            method: "eth_accounts",
+          });
+          if (accounts.length > 0) {
+            setWalletAddress(accounts[0]);
+          }
+        } catch (error) {
+          console.error("Error fetching wallet address:", error);
+        }
+      }
+    };
+
+    getConnectedWallet();
+
+    // Listen for account changes
+    if (window.ethereum) {
+      window.ethereum.on("accountsChanged", (accounts: string[]) => {
+        if (accounts.length > 0) {
+          setWalletAddress(accounts[0]);
+        } else {
+          setWalletAddress("");
+        }
+      });
+    }
+
+    return () => {
+      if (window.ethereum) {
+        window.ethereum.removeListener("accountsChanged", () => {});
+      }
+    };
+  }, []);
 
   return (
     <Card>
@@ -14,7 +50,9 @@ export const WalletInfo = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-lg font-mono">{walletAddress}</p>
+        <p className="text-lg font-mono">
+          {walletAddress ? walletAddress : "No wallet connected"}
+        </p>
       </CardContent>
     </Card>
   );
