@@ -91,28 +91,13 @@ const Index = () => {
     }
   };
 
-  const disconnectWallet = async () => {
-    try {
-      // Clear the wallet connection state
-      setConnected(false);
-      setAccount("");
-      
-      // Force MetaMask to forget the connection
-      if (window.ethereum && window.ethereum._state) {
-        window.ethereum._state.accounts = [];
-      }
-      
-      toast({
-        title: "Wallet Disconnected",
-        description: "Successfully disconnected from MetaMask",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Disconnection Failed",
-        description: "Failed to disconnect wallet",
-      });
-    }
+  const disconnectWallet = () => {
+    setConnected(false);
+    setAccount("");
+    toast({
+      title: "Wallet Disconnected",
+      description: "Successfully disconnected from MetaMask",
+    });
   };
 
   const handlePurchase = (workflow: Workflow) => {
