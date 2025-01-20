@@ -6,47 +6,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { useToast } from "@/hooks/use-toast";
 
-export const Header = () => {
-  const { toast } = useToast();
-  const { address, isConnected } = useAccount();
-  const { connectAsync } = useConnect();
-  const { disconnectAsync } = useDisconnect();
+interface HeaderProps {
+  connected: boolean;
+  account: string;
+  onConnect: () => void;
+  onDisconnect: () => void;
+}
 
-  const handleConnect = async () => {
-    try {
-      await connectAsync();
-      toast({
-        title: "Wallet Connected",
-        description: "Successfully connected to MetaMask",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Connection Failed",
-        description: "Failed to connect to MetaMask",
-      });
-    }
-  };
-
-  const handleDisconnect = async () => {
-    try {
-      await disconnectAsync();
-      toast({
-        title: "Wallet Disconnected",
-        description: "Successfully disconnected wallet",
-      });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Disconnection Failed",
-        description: "Failed to disconnect wallet",
-      });
-    }
-  };
-
+export const Header = ({
+  connected,
+  account,
+  onConnect,
+  onDisconnect,
+}: HeaderProps) => {
   return (
     <div className="flex justify-between items-center mb-12">
       <h1 className="text-4xl font-bold">Workflow Marketplace</h1>
@@ -77,13 +50,13 @@ export const Header = () => {
             <Globe className="w-5 h-5" />
           </a>
         </div>
-        {isConnected ? (
+        {connected ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="bg-blue-600 hover:bg-blue-700" size="lg">
                 <div className="flex items-center gap-2">
                   <Wallet className="w-4 h-4" />
-                  {`${address?.slice(0, 6)}...${address?.slice(-4)}`}
+                  {`${account.slice(0, 6)}...${account.slice(-4)}`}
                   <ChevronDown className="w-4 h-4 ml-1 opacity-70" />
                 </div>
               </Button>
@@ -92,14 +65,14 @@ export const Header = () => {
               <DropdownMenuItem onClick={() => window.location.href = "/dashboard"}>
                 Dashboard
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleDisconnect}>
+              <DropdownMenuItem onClick={onDisconnect}>
                 Disconnect Wallet
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Button
-            onClick={handleConnect}
+            onClick={onConnect}
             className="bg-blue-600 hover:bg-blue-700"
             size="lg"
           >
