@@ -7,37 +7,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
 import { useToast } from "@/hooks/use-toast";
 
 export const Header = () => {
   const { toast } = useToast();
   const { address, isConnected } = useAccount();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-    onSuccess() {
+  const { connectAsync } = useConnect();
+  const { disconnectAsync } = useDisconnect();
+
+  const handleConnect = async () => {
+    try {
+      await connectAsync();
       toast({
         title: "Wallet Connected",
         description: "Successfully connected to MetaMask",
       });
-    },
-    onError() {
+    } catch (error) {
       toast({
         variant: "destructive",
         title: "Connection Failed",
         description: "Failed to connect to MetaMask",
       });
-    },
-  });
-  
-  const { disconnect } = useDisconnect({
-    onSuccess() {
+    }
+  };
+
+  const handleDisconnect = async () => {
+    try {
+      await disconnectAsync();
       toast({
         title: "Wallet Disconnected",
         description: "Successfully disconnected wallet",
       });
-    },
-  });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Disconnection Failed",
+        description: "Failed to disconnect wallet",
+      });
+    }
+  };
 
   return (
     <div className="flex justify-between items-center mb-12">
@@ -84,14 +92,14 @@ export const Header = () => {
               <DropdownMenuItem onClick={() => window.location.href = "/dashboard"}>
                 Dashboard
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => disconnect()}>
+              <DropdownMenuItem onClick={handleDisconnect}>
                 Disconnect Wallet
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
           <Button
-            onClick={() => connect()}
+            onClick={handleConnect}
             className="bg-blue-600 hover:bg-blue-700"
             size="lg"
           >
