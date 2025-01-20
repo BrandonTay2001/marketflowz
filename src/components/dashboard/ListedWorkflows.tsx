@@ -4,14 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Edit2, Package } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { 
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import EditWorkflowDialog from './EditWorkflowDialog';
 import { 
   Pagination,
   PaginationContent,
@@ -101,7 +94,7 @@ export const ListedWorkflows = () => {
                 <TableHead className="w-[40%]">Workflow Name</TableHead>
                 <TableHead className="w-[25%]">Lifetime Revenue</TableHead>
                 <TableHead className="w-[25%]">Listing Date</TableHead>
-                <TableHead className="w-[10%]">Actions</TableHead>
+                <TableHead className="w-[10%]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -158,80 +151,11 @@ export const ListedWorkflows = () => {
         </CardContent>
       </Card>
 
-      <Dialog open={!!editingWorkflow} onOpenChange={(open) => !open && setEditingWorkflow(null)}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>Edit Workflow</DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSaveEdit} className="space-y-4">
-            <div>
-              <label htmlFor="edit-name" className="block text-sm font-medium mb-1">
-                Workflow Name
-              </label>
-              <Input
-                id="edit-name"
-                value={editingWorkflow?.name || ""}
-                onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, name: e.target.value } : null)}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="edit-description" className="block text-sm font-medium mb-1">
-                Description
-              </label>
-              <Textarea
-                id="edit-description"
-                value={editingWorkflow?.description || ""}
-                onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, description: e.target.value } : null)}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="edit-price" className="block text-sm font-medium mb-1">
-                Price (ETH)
-              </label>
-              <Input
-                id="edit-price"
-                type="number"
-                step="0.001"
-                value={editingWorkflow?.price || ""}
-                onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, price: e.target.value } : null)}
-                required
-              />
-            </div>
-
-            <div>
-              <label htmlFor="edit-image" className="block text-sm font-medium mb-1">
-                Workflow Image
-              </label>
-              <Input
-                id="edit-image"
-                type="file"
-                accept="image/*"
-                onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, image: e.target.files?.[0] || null } : null)}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="edit-workflow" className="block text-sm font-medium mb-1">
-                Workflow JSON File
-              </label>
-              <Input
-                id="edit-workflow"
-                type="file"
-                accept=".json"
-                onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, workflow: e.target.files?.[0] || null } : null)}
-              />
-            </div>
-
-            <Button type="submit" className="w-full">
-              Save Changes
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <EditWorkflowDialog
+          editingWorkflow={editingWorkflow}
+          setEditingWorkflow={setEditingWorkflow}
+          handleSaveEdit={handleSaveEdit}
+      />
     </>
   );
 };

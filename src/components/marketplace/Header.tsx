@@ -6,6 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTelegram } from '@fortawesome/free-brands-svg-icons'
 
 interface HeaderProps {
   connected: boolean;
@@ -39,7 +41,7 @@ export const Header = ({
             rel="noopener noreferrer"
             className="text-gray-400 hover:text-blue-400 transition-colors"
           >
-            <MessageCircle className="w-5 h-5" />
+            <FontAwesomeIcon icon={faTelegram} />
           </a>
           <a
             href="https://example.com"
