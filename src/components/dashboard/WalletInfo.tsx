@@ -1,45 +1,20 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAccount } from 'wagmi';
 
 export const WalletInfo = () => {
   const [walletAddress, setWalletAddress] = useState("");
 
+  const { address, isConnected } = useAccount();
+
   useEffect(() => {
-    const getConnectedWallet = async () => {
-      if (typeof window.ethereum !== "undefined") {
-        try {
-          const accounts = await window.ethereum.request({
-            method: "eth_accounts",
-          });
-          if (accounts.length > 0) {
-            setWalletAddress(accounts[0]);
-          }
-        } catch (error) {
-          console.error("Error fetching wallet address:", error);
-        }
-      }
-    };
-
-    getConnectedWallet();
-
-    // Listen for account changes
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts: string[]) => {
-        if (accounts.length > 0) {
-          setWalletAddress(accounts[0]);
-        } else {
-          setWalletAddress("");
-        }
-      });
+    if (isConnected && address) {
+      setWalletAddress(address);
+    } else {
+      setWalletAddress("");
     }
-
-    return () => {
-      if (window.ethereum) {
-        window.ethereum.removeListener("accountsChanged", () => {});
-      }
-    };
-  }, []);
+  }, [address, isConnected]);
 
   return (
     <Card>
