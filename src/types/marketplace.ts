@@ -1,8 +1,8 @@
 export interface Workflow {
-  id: string;
-  title: string;
-  description: string;
+  _id: string;
+  name: string;
+  desc: string;
   price: string;
   seller: string;
-  image?: string;
+  imageUrl?: string;
 }

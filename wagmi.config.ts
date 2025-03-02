@@ -1,10 +1,12 @@
-import { http, createConfig } from 'wagmi'
-import { mainnet, base } from 'wagmi/chains'
+import { http, createConfig, createStorage, injected } from 'wagmi'
+import { mainnet, base, baseSepolia } from 'wagmi/chains'
+import { walletConnect } from 'wagmi/connectors'
 
 export const config = createConfig({
-  chains: [mainnet, base],
+  chains: [baseSepolia],
   transports: {
-    [mainnet.id]: http(),
-    [base.id]: http(),
+    [baseSepolia.id]: http(),
   },
+  storage: createStorage({ storage: window.localStorage }), 
+  connectors: [walletConnect({projectId: '0897d453eda6dd603d65558c9c593edc'})],
 })

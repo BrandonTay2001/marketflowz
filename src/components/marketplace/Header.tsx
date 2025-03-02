@@ -69,6 +69,9 @@ export const Header = () => {
               <DropdownMenuItem onClick={() => window.location.href = "/dashboard"}>
                 Dashboard
               </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => window.location.href = "/generate"}>
+                Workflow Generator
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={() => disconnect()}>
                 Disconnect Wallet
               </DropdownMenuItem>

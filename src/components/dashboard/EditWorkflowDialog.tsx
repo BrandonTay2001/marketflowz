@@ -34,15 +34,15 @@ const EditWorkflowDialog = ({ editingWorkflow, setEditingWorkflow, handleSaveEdi
                         </label>
                         <Textarea
                             id="edit-description"
-                            value={editingWorkflow?.description || ""}
-                            onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, description: e.target.value } : null)}
+                            value={editingWorkflow?.desc || ""}
+                            onChange={(e) => setEditingWorkflow(prev => prev ? { ...prev, desc: e.target.value } : null)}
                             required
                         />
                     </div>
 
                     <div>
                         <label htmlFor="edit-price" className="block text-sm font-medium mb-1">
-                            Price (ETH)
+                            Price (FLOW)
                         </label>
                         <Input
                             id="edit-price"

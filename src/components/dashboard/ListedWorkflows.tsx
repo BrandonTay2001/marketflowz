@@ -13,51 +13,61 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { useEffect } from "react";
 
 interface WorkflowData {
-  id: string;
+  _id: string;
   name: string;
-  description?: string;
+  desc?: string;
   price?: string;
-  revenue: string;
-  listingDate: string;
-  image?: File | null;
-  workflow?: File | null;
+  createdAt?: string;
+  updatedAt?: string;
+  isActive?: boolean;
+  imageUrl?: string;
+  fileUrl?: string;
+  image?: File;
+  workflow?: File;
 }
 
-export const ListedWorkflows = () => {
+interface ListedWorkflowsProps {
+  address: string;
+}
+
+export const ListedWorkflows : React.FC<ListedWorkflowsProps> = ({ address }) => {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [editingWorkflow, setEditingWorkflow] = useState<WorkflowData | null>(null);
   const itemsPerPage = 5;
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    price: "",
+    image: null as File | null,
+    workflow: null as File | null,
+  });
   
   // In a real app, this would come from your backend
-  const listedWorkflows = [
-    {
-      id: "1",
-      name: "Data Processing Pipeline",
-      description: "A workflow for processing large datasets",
-      price: "0.5",
-      revenue: "0.5 ETH",
-      listingDate: "2024-03-01",
-    },
-    {
-      id: "2",
-      name: "ML Training Workflow",
-      description: "Machine learning model training pipeline",
-      price: "0.3",
-      revenue: "0.3 ETH",
-      listingDate: "2024-03-05",
-    },
-    {
-      id: "3",
-      name: "API Integration Flow",
-      description: "Workflow for integrating multiple APIs",
-      price: "0.2",
-      revenue: "0.2 ETH",
-      listingDate: "2024-03-10",
-    },
-  ];
+  const [listedWorkflows, setListedWorkflows] = useState<WorkflowData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchWorkflows = async () => {
+      try {
+        const response = await fetch(
+          `http://127.0.0.1:5000/dashboard/getListedWorkflows?&seller=${address}`
+        );
+        const data = await response.json();
+        console.log(data);
+        setListedWorkflows(data.workflows);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to fetch workflows:', error);
+        setIsLoading(false);
+      }
+    };
+
+    fetchWorkflows();
+  }, [currentPage, address]);
 
   const totalPages = Math.ceil(listedWorkflows.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -71,10 +81,43 @@ export const ListedWorkflows = () => {
   const handleSaveEdit = (e: React.FormEvent) => {
     e.preventDefault();
     // This would be replaced with actual save logic in the future
-    toast({
-      title: "Workflow Updated",
-      description: `Workflow ${editingWorkflow?.name} has been updated successfully.`,
-    });
+    const data = new FormData();
+    data.append("id", editingWorkflow._id);
+    data.append("name", editingWorkflow.name);
+    data.append("desc", editingWorkflow.desc);
+    data.append("seller", address);
+    data.append("price", editingWorkflow.price);
+    if (editingWorkflow.image) {
+      data.append("image", editingWorkflow.image);
+    }
+    if (editingWorkflow.workflow) {
+      data.append("workflowJson", editingWorkflow.workflow);
+    }
+    
+    fetch("http://127.0.0.1:5000/workflow/edit", {
+      method: "POST",
+      body: data,
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Edit failed");
+        }
+        return res.json();
+      })
+      .then((result) => {
+        console.log("Edit successful:", result);
+        toast({
+          title: "Workflow Updated",
+          description: `Workflow ${editingWorkflow?.name} has been updated successfully. You might need to refresh the page to view updated changes.`,
+        });
+      })
+      .catch((error) => {
+        console.error("Error editing:", error);
+        toast({
+          title: "Edit Failed",
+          description: "An error occurred while editing your workflow."
+        });
+      });
     setEditingWorkflow(null);
   };
 
@@ -92,17 +135,17 @@ export const ListedWorkflows = () => {
             <TableHeader>
               <TableRow>
                 <TableHead className="w-[40%]">Workflow Name</TableHead>
-                <TableHead className="w-[25%]">Lifetime Revenue</TableHead>
-                <TableHead className="w-[25%]">Listing Date</TableHead>
+                <TableHead className="w-[25%]">Price</TableHead>
+                <TableHead className="w-[25%]">Update Date</TableHead>
                 <TableHead className="w-[10%]"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {currentWorkflows.map((workflow) => (
-                <TableRow key={workflow.id}>
+                <TableRow key={workflow._id}>
                   <TableCell>{workflow.name}</TableCell>
-                  <TableCell>{workflow.revenue}</TableCell>
-                  <TableCell>{workflow.listingDate}</TableCell>
+                  <TableCell>{workflow.price} FLOW</TableCell>
+                  <TableCell>{workflow.updatedAt}</TableCell>
                   <TableCell>
                     <Button
                       variant="ghost"

@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { useEffect, useState } from "react";
 
-const Dashboard = () => {
+const Generator = () => {
     const navigate = useNavigate();
     const { address, isConnected } = useAccount();
     
@@ -40,4 +40,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Generator;

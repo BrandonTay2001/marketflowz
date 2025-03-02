@@ -1,11 +1,36 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DollarSign } from "lucide-react";
+import { useEffect, useState } from "react";
 
-export const RevenueStats = () => {
-  // In a real app, these would come from your backend
-  const lifetimeRevenue = "1.5 ETH";
-  const weeklyRevenue = "0.3 ETH";
-  const dailyRevenue = "0.05 ETH";
+interface RevenueStatsProps {
+  address: string;
+}
+
+export const RevenueStats : React.FC<RevenueStatsProps> = ({ address }) => {
+  const [stats, setStats] = useState({
+    lifetimeRevenue: 0,
+    weeklyRevenue: 0,
+    dailyRevenue: 0
+  });
+
+  useEffect(() => {
+    console.log(address);
+    async function fetchStats(address: string) {
+      try {
+        const response = await fetch(`http://127.0.0.1:5000/dashboard/getStats?seller=${address}`);
+        const data = await response.json();
+        setStats({
+          lifetimeRevenue: data.lifetimeRevenue,
+          weeklyRevenue: data.revenueWeekAgo,
+          dailyRevenue: data.revenueDayAgo,
+        });
+      } catch (error) {
+        console.error("Error fetching revenue stats:", error);
+      }
+    }
+
+    fetchStats(address);
+  }, [address]);
 
   return (
     <Card>
@@ -19,17 +44,17 @@ export const RevenueStats = () => {
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">Last 7 Days</p>
-            <p className="text-2xl font-bold">{weeklyRevenue}</p>
+            <p className="text-2xl font-bold">{stats.weeklyRevenue} FLOW</p>
           </div>
           
           <div className="text-center border-x border-border">
             <p className="text-sm text-muted-foreground mb-2">Lifetime</p>
-            <p className="text-2xl font-bold">{lifetimeRevenue}</p>
+            <p className="text-2xl font-bold">{stats.lifetimeRevenue} FLOW</p>
           </div>
           
           <div className="text-center">
             <p className="text-sm text-muted-foreground mb-2">Last 24 Hours</p>
-            <p className="text-2xl font-bold">{dailyRevenue}</p>
+            <p className="text-2xl font-bold">{stats.dailyRevenue} FLOW</p>
           </div>
         </div>
       </CardContent>

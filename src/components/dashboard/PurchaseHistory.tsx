@@ -3,7 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Button } from "@/components/ui/button";
 import { Download, ShoppingCart } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Pagination,
   PaginationContent,
@@ -13,34 +13,85 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 
-export const PurchaseHistory = () => {
+interface PurchaseHistoryProps {
+  address: string;
+}
+
+interface PurchasedWorkflowData {
+  _id: string;
+  amount: string;
+  buyer?: string;
+  purchasedAt?: string;
+  seller?: string;
+  txnHash?: string;
+  workflowId?: string;
+  workflowName?: string;
+}
+
+export const PurchaseHistory : React.FC<PurchaseHistoryProps> = ({ address }) => {
   const { toast } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const [purchasedWorkflows, setPurchasedWorkflows] = useState<PurchasedWorkflowData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   // In a real app, this would come from your backend
-  const purchases = [
-    {
-      id: "1",
-      name: "Data Processing Pipeline",
-      price: "0.1 ETH",
-      date: "2024-03-15",
-    },
-    {
-      id: "2",
-      name: "ML Training Workflow",
-      price: "0.2 ETH",
-      date: "2024-03-10",
-    },
-  ];
+  useEffect(() => {
+      const fetchWorkflows = async () => {
+        try {
+          const response = await fetch(
+            `http://127.0.0.1:5000/dashboard/getPurchasedWorkflows?buyer=${address}`
+          );
+          const data = await response.json();
+          console.log(data);
+          setPurchasedWorkflows(data.workflows);
+          setIsLoading(false);
+        } catch (error) {
+          console.error('Failed to fetch workflows:', error);
+          setIsLoading(false);
+        }
+      };
+  
+      fetchWorkflows();
+    }, [currentPage, address]);
 
-  const totalPages = Math.ceil(purchases.length / itemsPerPage);
+  const totalPages = Math.ceil(purchasedWorkflows.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPurchases = purchases.slice(startIndex, endIndex);
+  const currentPurchases = purchasedWorkflows.slice(startIndex, endIndex);
 
-  const handleDownload = (purchaseId: string) => {
+  const handleDownload = async (purchaseId: string) => {
     // This would be replaced with actual download logic in the future
+    const response = await fetch(`http://127.0.0.1:5000/workflow/getIndividual?id=${purchaseId}`);
+    const data = await response.json();
+    if (data.fileUrl) {
+      try {
+        var fileName = data.fileUrl.split('/').pop();
+        console.log(data.fileUrl);
+        fetch(data.fileUrl)
+          .then((response) => response.blob())
+          .then((blob) => {
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = fileName || "workflow.json";
+            document.body.appendChild(link);
+
+            link.click();
+
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+          })
+      } catch (err) {
+        console.error('Error downloading file:', err);
+        toast({
+          title: "Download Failed",
+          description: "There was an error downloading the file",
+          variant: "destructive"
+        });
+      }
+    }
+
     toast({
       title: "Download Started",
       description: `Downloading workflow ${purchaseId}...`,
@@ -67,15 +118,15 @@ export const PurchaseHistory = () => {
           </TableHeader>
           <TableBody>
             {currentPurchases.map((purchase) => (
-              <TableRow key={purchase.id}>
-                <TableCell>{purchase.name}</TableCell>
-                <TableCell>{purchase.price}</TableCell>
-                <TableCell>{purchase.date}</TableCell>
+              <TableRow key={purchase._id}>
+                <TableCell>{purchase.workflowName}</TableCell>
+                <TableCell>{purchase.amount}</TableCell>
+                <TableCell>{purchase.purchasedAt}</TableCell>
                 <TableCell>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDownload(purchase.id)}
+                    onClick={() => handleDownload(purchase.workflowId)}
                     title="Download Workflow"
                   >
                     <Download className="h-4 w-4" />
