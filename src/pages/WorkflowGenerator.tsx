@@ -4,11 +4,45 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { History } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const WorkflowGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
   const { toast } = useToast();
+  const itemsPerPage = 5;
+
+  // Mock data - in a real app this would come from your backend
+  const generatedWorkflows = [
+    {
+      id: "1",
+      prompt: "Create a data processing workflow",
+      date: "2024-03-15",
+      status: "Completed",
+    },
+    {
+      id: "2",
+      prompt: "Build an ML training pipeline",
+      date: "2024-03-14",
+      status: "Completed",
+    },
+  ];
+
+  const totalPages = Math.ceil(generatedWorkflows.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentWorkflows = generatedWorkflows.slice(startIndex, endIndex);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -62,6 +96,68 @@ const WorkflowGenerator = () => {
           >
             {isGenerating ? "Generating..." : "Generate Workflow"}
           </Button>
+        </div>
+
+        <div className="mt-12">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <History className="w-5 h-5" />
+                Generation History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[50%]">Prompt</TableHead>
+                    <TableHead className="w-[25%]">Date</TableHead>
+                    <TableHead className="w-[25%]">Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {currentWorkflows.map((workflow) => (
+                    <TableRow key={workflow.id}>
+                      <TableCell>{workflow.prompt}</TableCell>
+                      <TableCell>{workflow.date}</TableCell>
+                      <TableCell>{workflow.status}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              {totalPages > 1 && (
+                <div className="mt-4 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious 
+                          onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => setCurrentPage(page)}
+                            isActive={currentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
