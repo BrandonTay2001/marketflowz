@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { History } from "lucide-react";
+import { History, Loader2 } from "lucide-react";
 import {
   Pagination,
   PaginationContent,
@@ -56,11 +56,28 @@ const WorkflowGenerator = () => {
 
     setIsGenerating(true);
     try {
-      // TODO: Implement actual workflow generation logic
+      // Mock API call - replace with actual API endpoint
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Simulating API delay
+      
+      // Add the new workflow to the list (in a real app, this would come from the API response)
+      const newWorkflow = {
+        id: String(generatedWorkflows.length + 1),
+        prompt: prompt,
+        date: new Date().toISOString().split('T')[0],
+        status: "Completed"
+      };
+      
+      // In a real app, you would update this through proper state management
+      generatedWorkflows.unshift(newWorkflow);
+      
       toast({
-        title: "Generation Started",
-        description: "Your workflow is being generated...",
+        title: "Success",
+        description: "Workflow generated successfully",
       });
+      
+      // Reset the form
+      setPrompt('');
+      setCurrentPage(1);
     } catch (error) {
       toast({
         variant: "destructive",
@@ -94,7 +111,14 @@ const WorkflowGenerator = () => {
             disabled={isGenerating || !prompt.trim()}
             className="w-full"
           >
-            {isGenerating ? "Generating..." : "Generate Workflow"}
+            {isGenerating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Generating...
+              </>
+            ) : (
+              "Generate Workflow"
+            )}
           </Button>
         </div>
 
